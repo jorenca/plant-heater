@@ -128,16 +128,16 @@ void temperatureControl() {
 //////////////////////// Web server endpoints
 
 
-String msFromNowToDateJS = String("function msFromNowToDate(msFromNow) {") +
-  "const date = new Date(Date.now() + msFromNow);" +
-  "return date.toLocaleString(); }";
-
-String pageTemplate(String content) {
-  return String("<html><head><script>") + msFromNowToDateJS + "</script></head>" +
-    "<body><div>" + content + "</div></body></html>";
-}
 
 void handleRoot() {
+
+  String indexContent = String("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"/><title>Plant Heater Interface</title><link href=\"https://jorenca.github.io/plant-heater/static/css/main.chunk.css\" rel=\"stylesheet\"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id=\"root\"></div><script>!function(e){function r(r){for(var n,i,l=r[0],f=r[1],a=r[2],c=0,s=[];c<l.length;c++)i=l[c],Object.prototype.hasOwnProperty.call(o,i)&&o[i]&&s.push(o[i][0]),o[i]=0;for(n in f)Object.prototype.hasOwnProperty.call(f,n)&&(e[n]=f[n]);for(p&&p(r);s.length;)s.shift()();return u.push.apply(u,a||[]),t()}function t(){for(var e,r=0;r<u.length;r++){for(var t=u[r],n=!0,l=1;l<t.length;l++){var f=t[l];0!==o[f]&&(n=!1)}n&&(u.splice(r--,1),e=i(i.s=t[0]))}return e}var n={},o={1:0},u=[];function i(r){if(n[r])return n[r].exports;var t=n[r]={i:r,l:!1,exports:{}};return e[r].call(t.exports,t,t.exports,i),t.l=!0,t.exports}i.m=e,i.c=n,i.d=function(e,r,t){i.o(e,r)||Object.defineProperty(e,r,{enumerable:!0,get:t})},i.r=function(e){\"undefined\"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:\"Module\"}),Object.defineProperty(e,\"__esModule\",{value:!0})},i.t=function(e,r){if(1&r&&(e=i(e)),8&r)return e;if(4&r&&\"object\"==typeof e&&e&&e.__esModule)return e;var t=Object.create(null);if(i.r(t),Object.defineProperty(t,\"default\",{enumerable:!0,value:e}),2&r&&\"string\"!=typeof e)for(var n in e)i.d(t,n,function(r){return e[r]}.bind(null,n));return t},i.n=function(e){var r=e&&e.__esModule?function(){return e.default}:function(){return e};return i.d(r,\"a\",r),r},i.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)},i.p=\"/\";var l=this[\"webpackJsonpir-hub-web-ui\"]=this[\"webpackJsonpir-hub-web-ui\"]||[],f=l.push.bind(l);l.push=r,l=l.slice();for(var a=0;a<l.length;a++)r(l[a]);var p=f;t()}([])</script><script src=\"https://jorenca.github.io/plant-heater/static/js/2.chunk.js\"></script><script src=\"https://jorenca.github.io/plant-heater/static/js/main.chunk.js\"></script></body></html>");
+  
+  server.send(200, "text/html", indexContent);
+}
+
+
+void handleReport() {
   float h = dht.readHumidity();
   float t = dht.readTemperature();
 
@@ -146,25 +146,21 @@ void handleRoot() {
 //    return;
 //  }
 
-  String response = "<div>Temperature: " + String(t, 1) + " C</div>" +
-                    "<div>Humidity: " + String(h, 1) + " %</div>" +
-                    "<div>Low voltage heater power PWM: " + String(100.0 * powerPwmValue / 255.0, 1) + "%<div>" +
-                    "<div>Heating active: " + (powerPwmValue > 0 ? "Yes" : "No") + "</div>" +
-                    "<div>Last turn on: " + (
-                      lastOn > 0
-                        ? "<span id='lastOnP' /><script>document.getElementById('lastOnP').textContent = msFromNowToDate(" + String(lastOn - millis()) + ")</script>"
-                        : "never"
-                    ) + "</div>" +
-                    "<div>Last Wi-Fi reconnect: " + (
-                      lastReconnectAt > 0
-                        ? "<span id='lastCon' /><script>document.getElementById('lastCon').textContent = msFromNowToDate(" + String(lastReconnectAt - millis()) + ")</script>"
-                        : "never"
-                    ) + "</div><hr/>" +
-                    "<div>Activation conditions: Temperature &lt; " + HEATING_ACTIVATION_TEMPERATURE + " C</div>" +
-                    "<div>Deactivation conditions: Temperature &gt; " + HEATING_DEACTIVATION_TEMPERATURE + " C</div>";
+  String response = String("{\n") +
+  "  \"temperature\": " + String(t, 1) + ",\n" +
+  "  \"humidity\": " + String(h, 1) + ",\n" +
+  "  \"lvHeatPower\": " + String(100.0 * powerPwmValue / 255.0, 1) + ",\n" +
+  "  \"hvHeatPower\": " + (powerPwmValue > 0 ? 100 : 0) + ",\n" +
+  "  \"uptimeMillis\": " + millis() + ",\n" +
+  "  \"lastHeatOn\": " + lastOn + ",\n" +
+  "  \"lastReconnect\": " + lastReconnectAt + ",\n" +
+  "  \"activationTemp\": " + HEATING_ACTIVATION_TEMPERATURE + ",\n" +
+  "  \"deactivationTemp\": " + HEATING_DEACTIVATION_TEMPERATURE + "\n" +
+  "}";
 
-  server.send(200, "text/html", pageTemplate(response));
+  server.send(200, "text/json", response);
 }
+
 
 
 //////////////////////// main functions
@@ -190,6 +186,7 @@ void setup() {
 
   // Server routes
   server.on("/", handleRoot);
+  server.on("/report", handleReport);
   server.begin();
   Serial.println("[HTTP] Server started");
 
