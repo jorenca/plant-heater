@@ -11,7 +11,7 @@ import {
 import "chartjs-adapter-date-fns";
 import { Line } from "react-chartjs-2";
 
-import thresholdBackgroundPlugin from "./chart/thresholdBackgroundPlugin";
+import thresholdBackgroundPlugin from "./thresholdBackgroundPlugin";
 
 
 ChartJS.register(thresholdBackgroundPlugin());

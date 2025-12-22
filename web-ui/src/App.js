@@ -1,5 +1,5 @@
 
-import ChartAndControls from "./components/ChartAndControls";
+import ChartAndControls from "./components/chart/ChartAndControls";
 import InformationBoxes from "./components/InformationBoxes";
 import { useSensorData } from "./hooks/useSensorData";
 
