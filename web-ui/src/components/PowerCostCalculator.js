@@ -2,6 +2,8 @@ import { useState, useMemo } from "react";
 
 import "./PowerCostCalculator.css";
 
+const EUR_TO_BGN = 1.95583;
+
 
 export default function PowerCostCalculator() {
 
@@ -122,8 +124,8 @@ export default function PowerCostCalculator() {
 
         <div className='cost-calculator-result'>
           <strong>Estimated cost:</strong>
-          <div>Daily: €{results.dailyCost.toFixed(2)}</div>
-          <div>Monthly: €{results.monthlyCost.toFixed(2)}</div>
+          <div>Daily: €{results.dailyCost.toFixed(2)} / {(results.dailyCost * EUR_TO_BGN).toFixed(2)} лв.</div>
+          <div>Monthly: €{results.monthlyCost.toFixed(2)} / {(results.monthlyCost * EUR_TO_BGN).toFixed(2)} лв.</div>
         </div>
       </div>
     </>
