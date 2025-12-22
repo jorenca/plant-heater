@@ -25,12 +25,13 @@ function loadFromStorage() {
     const cutoff = Date.now() - MAX_AGE_MS;
 
     const validIndexes = parsed.timestamps
-      .map((ts, idx) => ({ ts, idx }))
-      .filter(({ ts }) => new Date(ts).getTime() >= cutoff)
+      .map((ts, idx) => ({ ts: new Date(ts), idx }))
+      .filter(({ ts }) => ts.getTime() >= cutoff)
+      //.sort((a, b) => a.ts.getTime() - b.ts.getTime())
       .map(({ idx }) => idx);
 
     const filteredTimestamps = validIndexes.map(
-      (i) => parsed.timestamps[i]
+      (i) => new Date(parsed.timestamps[i])
     );
 
     const filteredSensorData = {};
@@ -70,47 +71,42 @@ export function useSensorData() {
     stored?.latestData || {}
   );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const json = await fetchSensors();
-        const isoTime = json.timestamp.toISOString();
+  const fetchData = async () => {
+    try {
+      const json = await fetchSensors();
 
-        setLatestData(json);
-        setTimestamps((prev) =>
-          [...prev, isoTime].slice(-HISTORY_LIMIT)
-        );
+      setLatestData(json);
+      setTimestamps((prev) =>
+        [...prev, json.timestamp].slice(-HISTORY_LIMIT)
+      );
 
-        setSensorData((prev) => {
-          const updated = { ...prev };
+      setSensorData((prev) => {
+        const updated = { ...prev };
 
-          Object.entries(json).forEach(([name, value]) => {
-            if (!STORED_VALUES.includes(name)) return;
+        Object.entries(json).forEach(([name, value]) => {
+          if (!STORED_VALUES.includes(name)) return;
 
-            updated[name] = [
-              ...(updated[name] || []),
-              value,
-            ].slice(-HISTORY_LIMIT);
-          });
-
-          return updated;
+          updated[name] = [
+            ...(updated[name] || []),
+            value,
+          ].slice(-HISTORY_LIMIT);
         });
-      } catch (err) {
-        console.error(err);
-      }
-    };
 
+        return updated;
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
     const interval = setInterval(fetchData, POLL_INTERVAL);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    saveToStorage({
-      timestamps,
-      sensorData,
-      latestData,
-    });
+    saveToStorage({ timestamps, sensorData, latestData });
   }, [timestamps, sensorData, latestData]);
 
   const clearAllData = useCallback(() => {
@@ -118,12 +114,11 @@ export function useSensorData() {
     setTimestamps([]);
     setSensorData({});
     setLatestData({});
+    fetchData();
   }, []);
 
   return {
-    timestamps: timestamps.map((ts) =>
-      new Date(ts).toLocaleTimeString()
-    ),
+    timestamps,
     sensorData,
     latestData,
     clearAllData,

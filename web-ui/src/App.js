@@ -4,7 +4,6 @@ import InformationBoxes from "./components/InformationBoxes";
 import { useSensorData } from "./hooks/useSensorData";
 
 
-
 function App() {
   const { timestamps, sensorData, latestData, clearAllData } = useSensorData();
   const {
@@ -18,6 +17,10 @@ function App() {
     lastHeatOn,
     lastReconnect
   } = latestData;
+
+  if (!timestamps || !temperature) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div style={{ width: "900px", margin: "1rem auto" }}>
@@ -35,7 +38,11 @@ function App() {
         timestamp={timestamps[timestamps.length-1]}
       />
 
-      <ChartAndControls timestamps={timestamps} sensorData={sensorData} clearDataFn={clearAllData} />
+      <ChartAndControls
+        timestamps={timestamps}
+        sensorData={sensorData}
+        clearDataFn={() => clearAllData() }
+      />
 
     </div>
   );

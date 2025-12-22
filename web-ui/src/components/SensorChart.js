@@ -3,10 +3,12 @@ import {
   LineElement,
   PointElement,
   LinearScale,
-  CategoryScale,
+  TimeScale,
   Tooltip,
   Legend,
 } from "chart.js";
+
+import "chartjs-adapter-date-fns";
 import { Line } from "react-chartjs-2";
 
 import thresholdBackgroundPlugin from "./chart/thresholdBackgroundPlugin";
@@ -27,7 +29,7 @@ ChartJS.register(
   LineElement,
   PointElement,
   LinearScale,
-  CategoryScale,
+  TimeScale,
   Tooltip,
   Legend
 );
@@ -64,7 +66,11 @@ export default function SensorChart({ timestamps, sensorData }) {
   // --- Scales ---
   const scales = {
     x: {
-      title: { display: true, text: "Time" },
+      type: "time",
+      title: {
+        display: true,
+        text: "Time"
+      }
     },
     "y-temperature": {
       type: "linear",
@@ -92,12 +98,15 @@ export default function SensorChart({ timestamps, sensorData }) {
   };
 
   const chartData = {
-    labels: timestamps,
+    //labels: timestamps,
     datasets: sensors
       .filter((sensor) => !EXCLUDED_FIELDS.includes(sensor))
       .map((sensor, idx) => ({
         label: sensor,
-        data: sensorData[sensor],
+        data: timestamps.map((ts, i) => ({
+          x: ts.toISOString(),
+          y: sensorData[sensor][i],
+        })),
         borderColor: SENSOR_COLORS[idx % SENSOR_COLORS.length],
         tension: 0.3,
         yAxisID: sensor.toLowerCase().includes("temp")
@@ -113,6 +122,7 @@ export default function SensorChart({ timestamps, sensorData }) {
     plugins: {
       thresholdBackground: {
         values: sensorData.lvHeatPower,
+        timestamps,
         threshold: 1,
         colorAbove: "rgba(194, 139, 203, 0.5)",
         colorBelow: null

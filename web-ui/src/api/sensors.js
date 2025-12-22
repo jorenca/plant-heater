@@ -1,6 +1,6 @@
 export async function fetchSensors() {
 
-  //return getMockSensorReport(); // For testing only
+  // return getMockSensorReport(); // For testing only
 
   const res = await fetch("/report");
   if (!res.ok) {

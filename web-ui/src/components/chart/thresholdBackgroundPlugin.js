@@ -10,26 +10,30 @@ export default function thresholdBackgroundPlugin() {
       } = chart;
 
       const {
-        datasetIndex = 0,
+        timestamps = [],
+        values = [],
         threshold,
         colorAbove = "rgba(255, 99, 132, 0.15)",
         colorBelow = null,
       } = pluginOptions;
 
-      const meta = chart.getDatasetMeta(datasetIndex);
-      const data = pluginOptions.values;
-
-      if (!meta || !data) return;
+      if (!timestamps.length || !values.length) return;
 
       ctx.save();
 
-      for (let i = 0; i < data.length; i++) {
-        const value = data[i];
-        const xStart = meta.data[i]?.x;
-        const xEnd =
-          meta.data[i + 1]?.x ?? scales.x.right;
+      for (let i = 0; i < values.length; i++) {
+        const value = values[i];
+        const tsStart = timestamps[i];
+        const tsEnd = timestamps[i + 1];
 
-        if (xStart == null || xEnd == null) continue;
+        if (!tsStart) continue;
+
+        const xStart = scales.x.getPixelForValue(tsStart);
+        const xEnd = tsEnd
+          ? scales.x.getPixelForValue(tsEnd)
+          : scales.x.right;
+
+        if (!isFinite(xStart) || !isFinite(xEnd)) continue;
 
         if (value >= threshold && colorAbove) {
           ctx.fillStyle = colorAbove;

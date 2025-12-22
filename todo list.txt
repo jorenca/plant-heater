@@ -1,2 +1,1 @@
-- chart X axis according to time
 - power usage/cost calculator
