@@ -147,8 +147,8 @@ void handleReport() {
 //  }
 
   String response = String("{\n") +
-  "  \"temperature\": " + String(t, 1) + ",\n" +
-  "  \"humidity\": " + String(h, 1) + ",\n" +
+  "  \"temperature\": " + (isnan(t) ? "null" : String(t, 1)) + ",\n" +
+  "  \"humidity\": " + (isnan(h) ? "null" : String(h, 1)) + ",\n" +
   "  \"lvHeatPower\": " + String(100.0 * powerPwmValue / 255.0, 1) + ",\n" +
   "  \"hvHeatPower\": " + (powerPwmValue > 0 ? 100 : 0) + ",\n" +
   "  \"uptimeMillis\": " + millis() + ",\n" +
@@ -159,6 +159,22 @@ void handleReport() {
   "}";
 
   server.send(200, "text/json", response);
+}
+
+void handleTest() {
+
+    turnOffHeating();
+    delay(1000);
+
+    for (int i=0; i < 20; i++) {
+      adjustMaxHeating();
+      delay(100); // wait for a bit for the change to be registered in the current sensor
+    }
+    
+    turnOffHeating();
+    delay(1000);
+
+    server.send(200, "text/json", "{ \"result\": 1 }");
 }
 
 
@@ -187,6 +203,7 @@ void setup() {
   // Server routes
   server.on("/", handleRoot);
   server.on("/report", handleReport);
+  server.on("/test", handleTest);
   server.begin();
   Serial.println("[HTTP] Server started");
 
