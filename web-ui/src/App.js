@@ -1,6 +1,7 @@
 
 import ChartAndControls from "./components/chart/ChartAndControls";
 import InformationBoxes from "./components/InformationBoxes";
+import PowerCostCalculator from "./components/PowerCostCalculator";
 import { useSensorData } from "./hooks/useSensorData";
 
 
@@ -43,6 +44,8 @@ function App() {
         sensorData={sensorData}
         clearDataFn={() => clearAllData() }
       />
+
+      <PowerCostCalculator />
 
     </div>
   );

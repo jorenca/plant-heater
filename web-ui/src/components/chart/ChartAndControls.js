@@ -16,7 +16,7 @@ export default function ChartAndControls({ timestamps, sensorData, clearDataFn }
   }
 
   return (
-    <div>
+    <div style={{ marginBottom: '5rem' }}>
       <h2 style={{ textAlign: 'center' }}>Data over time</h2>
 
       <SensorChart
@@ -29,13 +29,11 @@ export default function ChartAndControls({ timestamps, sensorData, clearDataFn }
           {showDataControls ? 'Hide' : 'Show'} data controls
         </button>
 
-        <div style={{ margin: '1rem' }} />
-
         { showDataControls && (
-          <>
-            <span>Data points: {timestamps.length}</span>
-            <button onClick={confirmClear}>Clear data</button>
-          </>
+          <div style={{ margin: '0.5rem' }}>
+              <span style={{ marginRight: '1rem' }}>Data points: {timestamps.length}</span>
+              <button onClick={confirmClear}>Clear data</button>
+          </div>
         )}
 
       </div>
