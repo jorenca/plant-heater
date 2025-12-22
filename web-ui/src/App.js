@@ -1,8 +1,44 @@
+import { useState } from "react";
+
 import SensorChart from "./components/SensorChart";
 import { useSensorData } from "./hooks/useSensorData";
 
+
+function ChartAndControls({ timestamps, sensorData, clearDataFn }) {
+
+  const [showDataControls, setShowDataControls] = useState(false);
+
+  function confirmClear() {
+    const confirmation = window.confirm('Are you sure you want to clear all data?');
+    if (confirmation) {
+      clearDataFn();
+      setShowDataControls(false);
+    }
+  }
+
+  return (
+    <div>
+      <h2>Data over time</h2>
+
+      <SensorChart
+        timestamps={timestamps}
+        sensorData={sensorData}
+      />
+
+      { !showDataControls
+        ? <button onClick={() => setShowDataControls(true)}>Show data controls</button>
+        : <div>
+            <button onClick={confirmClear}>Clear data</button>
+          </div>
+      }
+    </div>
+  );
+
+}
+
+
 function App() {
-  const { timestamps, sensorData, latestData } = useSensorData();
+  const { timestamps, sensorData, latestData, clearAllData } = useSensorData();
   const {
     temperature,
     humidity,
@@ -37,11 +73,7 @@ function App() {
         <div>Deactivation temperature: {deactivationTemp} °C</div>
       </div>
 
-      <h2>Data over time</h2>
-      <SensorChart
-        timestamps={timestamps}
-        sensorData={sensorData}
-      />
+      <ChartAndControls timestamps={timestamps} sensorData={sensorData} clearDataFn={clearAllData} />
 
     </div>
   );
