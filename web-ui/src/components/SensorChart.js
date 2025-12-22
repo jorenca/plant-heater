@@ -114,7 +114,7 @@ export default function SensorChart({ timestamps, sensorData }) {
       thresholdBackground: {
         values: sensorData.lvHeatPower,
         threshold: 1,
-        colorAbove: "rgba(255, 99, 132, 0.5)",
+        colorAbove: "rgba(194, 139, 203, 0.5)",
         colorBelow: null
       },
     },

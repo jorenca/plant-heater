@@ -23,8 +23,8 @@ const mockState = {
 
 function getMockSensorReport() {
 
-  const mockReportDate = new Date(mockState.reportDate.getTime() + MOCK_DATA_INTERVAL_MS);
-  mockState.reportDate = mockReportDate;
+  const mockReportDate = mockState.reportDate;
+  mockState.reportDate = new Date(mockReportDate.getTime() + MOCK_DATA_INTERVAL_MS);
 
   const temperature = Math.sin((mockReportDate.getHours()-6) * Math.PI / 12)*7 + 2 + Math.random() * 2;
   const activationTemp = 1.5;
