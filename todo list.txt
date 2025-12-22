@@ -1,0 +1,3 @@
+- chart X axis according to time
+- main stats are shown bigger/styling
+- power usage/cost calculator

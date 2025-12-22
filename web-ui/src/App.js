@@ -25,12 +25,21 @@ function ChartAndControls({ timestamps, sensorData, clearDataFn }) {
         sensorData={sensorData}
       />
 
-      { !showDataControls
-        ? <button onClick={() => setShowDataControls(true)}>Show data controls</button>
-        : <div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        <button onClick={() => setShowDataControls(!showDataControls)}>
+          {showDataControls ? 'Hide' : 'Show'} data controls
+        </button>
+
+        <div style={{ margin: '1rem' }} />
+
+        { showDataControls && (
+          <>
+            <span>Data points: {timestamps.length}</span>
             <button onClick={confirmClear}>Clear data</button>
-          </div>
-      }
+          </>
+        )}
+
+      </div>
     </div>
   );
 

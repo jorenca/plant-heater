@@ -9,10 +9,12 @@ const STORED_VALUES = [
   "humidity",
   "activationTemp",
   "deactivationTemp",
+  "lvHeatPower"
 ];
 
 const STORAGE_KEY = "sensor-data-v1";
 const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
 
 function loadFromStorage() {
   try {
@@ -72,7 +74,7 @@ export function useSensorData() {
     const fetchData = async () => {
       try {
         const json = await fetchSensors();
-        const isoTime = new Date().toISOString();
+        const isoTime = json.timestamp.toISOString();
 
         setLatestData(json);
         setTimestamps((prev) =>
