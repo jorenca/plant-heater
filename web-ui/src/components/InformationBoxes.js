@@ -1,3 +1,4 @@
+import './InformationBoxes.css';
 
 
 export default function InformationBoxes({
@@ -24,7 +25,7 @@ export default function InformationBoxes({
           <div>{timestamp.toLocaleString()}</div>
         </div>
 
-        <div style={{ margin: '0 5rem 5rem 5rem', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <div className='info-row'>
           <fieldset>
             <legend>Heating</legend>
 

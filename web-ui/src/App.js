@@ -20,7 +20,7 @@ function App() {
   } = latestData;
 
   return (
-    <div style={{ width: "900px", margin: "40px auto" }}>
+    <div style={{ width: "900px", margin: "1rem auto" }}>
 
       <InformationBoxes
         temperature={Math.round(temperature*10)/10}
