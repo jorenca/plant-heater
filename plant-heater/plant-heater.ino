@@ -107,10 +107,10 @@ void temperatureControl() {
   float temperatureNow = dht.readTemperature();
   // Serial.println(temperatureNow);
   
-  if (temperatureNow < HEATING_ACTIVATION_TEMPERATURE) {
+  if (temperatureNow < HEATING_ACTIVATION_TEMPERATURE && !heatingActive) {
     heatingActive = true;
     lastOn = millis();
-  } else if (temperatureNow > HEATING_DEACTIVATION_TEMPERATURE) {
+  } else if (temperatureNow > HEATING_DEACTIVATION_TEMPERATURE && heatingActive) {
     heatingActive = false;
   }
 

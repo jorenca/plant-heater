@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 import "./PowerCostCalculator.css";
 
@@ -15,6 +15,11 @@ export default function PowerCostCalculator({ dayHoursEstimate, nightHoursEstima
 
   const [dayRate, setDayRate] = useState(0.124);   // €/kWh
   const [nightRate, setNightRate] = useState(0.075); // €/kWh
+
+  useEffect(() => {
+    setDayHeatingHours(dayHoursEstimate);
+    setNightHeatingHours(nightHoursEstimate);
+  }, [dayHoursEstimate, nightHoursEstimate]);
 
   const results = useMemo(() => {
     const dayHeatingKWh =
