@@ -1,1 +1,3 @@
-ALL DONE!
+- calculator input fields cannot be negative
+- flash controller and tweak responsive web design
+- measure and update values for device power consumption

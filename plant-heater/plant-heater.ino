@@ -177,7 +177,7 @@ void handleTest() {
     turnOffHeating();
     delay(1000);
 
-    for (int i=0; i < 20; i++) {
+    for (int i=0; i < 100; i++) { // total loop time will be 10 seconds
       adjustMaxHeating();
       delay(100); // wait for a bit for the change to be registered in the current sensor
     }
