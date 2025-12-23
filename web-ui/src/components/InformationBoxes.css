@@ -1,9 +1,32 @@
+.info-boxes-container {
+  margin-bottom: 5rem;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.heating-info {
+  display: inline-block;
+  padding: 10px;
+
+  & > * {
+    padding: 0 25px;
+  }
+}
 
 .info-row {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 0 5rem 5rem 5rem;
+
+  & > * {
+    padding: 1rem;
+    margin: 0.5rem;
+
+    flex: 1;
+    text-align: center;
+    align-content: center;
+  }
 }
 
 

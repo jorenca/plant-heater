@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
-import { fetchSensors } from "../api/sensors";
+import { fetchSensors, getMockSensorReport } from "../api/sensors";
 
-const HISTORY_LIMIT = 1000;
+
+const HISTORY_LIMIT = 2000;
 const POLL_INTERVAL = 15 * 60 * 1000;
 
 const STORED_VALUES = [
@@ -74,6 +75,8 @@ export function useSensorData() {
   const fetchData = async () => {
     try {
       const json = await fetchSensors();
+      // FOR TESTING ONLY
+      //const json = getMockSensorReport(timestamps.length ? timestamps[timestamps.length - 1] : null);
 
       setLatestData(json);
       setTimestamps((prev) =>

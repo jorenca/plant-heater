@@ -5,7 +5,7 @@ import "./PowerCostCalculator.css";
 const EUR_TO_BGN = 1.95583;
 
 
-export default function PowerCostCalculator() {
+export default function PowerCostCalculator({ dayHoursEstimate, nightHoursEstimate }) {
 
   const [heatingPower, setHeatingPower] = useState(300); // watts
   const [idlePower, setIdlePower] = useState(20); // watts
@@ -53,6 +53,10 @@ export default function PowerCostCalculator() {
   return (
     <>
       <h2>Power Usage Calculator</h2>
+
+      <div className='cost-calculator-estimates'>
+        <div>Heating hours estimate: {dayHoursEstimate} hours at day rate, {nightHoursEstimate} hours at night rate.</div>
+      </div>
 
       <div className='cost-calculator-row'>
 

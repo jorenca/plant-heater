@@ -1,6 +1,5 @@
 export async function fetchSensors() {
 
-  // return getMockSensorReport(); // For testing only
 
   const res = await fetch("/report");
   if (!res.ok) {
@@ -15,16 +14,17 @@ export async function fetchSensors() {
   };
 }
 
+
 // For testing only
 const MOCK_DATA_INTERVAL_MS = 15 * 60 * 1000;
 const mockState = {
-  reportDate: new Date()
+  nextReportDate: new Date()
 };
 
-function getMockSensorReport() {
+export function getMockSensorReport(earliestDate) {
 
-  const mockReportDate = mockState.reportDate;
-  mockState.reportDate = new Date(mockReportDate.getTime() + MOCK_DATA_INTERVAL_MS);
+  const mockReportDate = new Date(Math.max(earliestDate, mockState.nextReportDate));
+  mockState.nextReportDate = new Date(mockReportDate.getTime() + MOCK_DATA_INTERVAL_MS);
 
   const temperature = Math.sin((mockReportDate.getHours()-6) * Math.PI / 12)*7 + 2 + Math.random() * 2;
   const activationTemp = 1.5;

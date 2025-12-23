@@ -1,8 +1,9 @@
-
 import ChartAndControls from "./components/chart/ChartAndControls";
 import InformationBoxes from "./components/InformationBoxes";
 import PowerCostCalculator from "./components/PowerCostCalculator";
+
 import { useSensorData } from "./hooks/useSensorData";
+import { calculateAverageStats } from './stats/averageStats.js';
 
 
 function App() {
@@ -23,6 +24,14 @@ function App() {
     return <div>Loading...</div>;
   }
 
+  const {
+    averagingPeriod,
+    averageTemperature,
+    activeDayHours,
+    activeNightHours,
+    activePercentage
+  } = calculateAverageStats(timestamps, sensorData);
+
   return (
     <div style={{ width: "900px", margin: "1rem auto" }}>
 
@@ -36,6 +45,9 @@ function App() {
         uptimeMillis={uptimeMillis}
         lastReconnect={lastReconnect}
         lastHeatOn={lastHeatOn}
+        averageTemperature={averageTemperature}
+        averagingPeriod={averagingPeriod}
+        heatingActivePercentage={activePercentage}
         timestamp={timestamps[timestamps.length-1]}
       />
 
@@ -45,7 +57,10 @@ function App() {
         clearDataFn={() => clearAllData() }
       />
 
-      <PowerCostCalculator />
+      <PowerCostCalculator
+        dayHoursEstimate={activeDayHours}
+        nightHoursEstimate={activeNightHours}
+      />
 
     </div>
   );

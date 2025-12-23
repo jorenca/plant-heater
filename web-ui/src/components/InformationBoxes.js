@@ -1,6 +1,30 @@
 import './InformationBoxes.css';
 
 
+export const HEATING_INDICATION_COLOR = 'rgba(194, 139, 203, 0.5)';
+
+
+function formatDurationMs(ms) {
+
+  let totalSeconds = Math.floor(ms / 1000);
+  const days = Math.floor(totalSeconds / 86400); // 86400 = 24*60*60
+  totalSeconds %= 86400;
+
+  const hours = Math.floor(totalSeconds / 3600);
+  totalSeconds %= 3600;
+
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  const parts = [];
+  if (days) parts.push(`${days} day${days !== 1 ? "s" : ""}`);
+  if (hours) parts.push(`${hours} hour${hours !== 1 ? "s" : ""}`);
+  parts.push(`${minutes} minute${minutes !== 1 ? "s" : ""}`);
+
+  return parts.join(", ");
+}
+
+
 export default function InformationBoxes({
   temperature,
   humidity,
@@ -11,43 +35,51 @@ export default function InformationBoxes({
   hvHeatPower,
   activationTemp,
   deactivationTemp,
+  averageTemperature,
+  heatingActivePercentage,
+  averagingPeriod,
   timestamp
 }) {
 
   return (
     <>
-      <div style={{display: 'flex', flexDirection: 'column'}}>
+      <div className='info-boxes-container'>
         <div style={{ textAlign: 'center', margin: '5rem' }}>
           <div style={{ fontWeight: 'bold', fontSize: 'xxx-large' }}>
             {temperature} °C
           </div>
           <div>{humidity}% RH</div>
           <div>{timestamp.toLocaleString()}</div>
-        </div>
 
-        <div className='info-row'>
-          <fieldset>
-            <legend>Heating</legend>
-
-            <div style={{ backgroundColor: lvHeatPower > 0 ? 'lightgreen' : 'unset' }}>
-              Low-voltage: { lvHeatPower > 0
+          <div className='heating-info'>
+            <div style={{ backgroundColor: lvHeatPower > 0 ? HEATING_INDICATION_COLOR : 'unset' }}>
+              Low-voltage heaters: { lvHeatPower > 0
                 ? <span >On ({lvHeatPower} %)</span>
                 : <span>Off</span>
               }
             </div>
-            <div style={{ backgroundColor: hvHeatPower > 0 ? 'lightgreen' : 'unset' }}>
-              Mains: { hvHeatPower > 0 ? 'On' : 'Off' }
+            <div style={{ backgroundColor: hvHeatPower > 0 ? HEATING_INDICATION_COLOR : 'unset' }}>
+              Mains heaters: { hvHeatPower > 0 ? 'On' : 'Off' }
             </div>
+          </div>
+        </div>
 
-            <div>Last active: {lastHeatOn > 0 ? new Date(new Date() - uptimeMillis + lastHeatOn).toLocaleString() : 'never'}</div>
+        <div className='info-row'>
+          <fieldset>
+            <legend>Statistics</legend>
+
+            <div>Last heating started on {lastHeatOn > 0 ? new Date(new Date() - uptimeMillis + lastHeatOn).toLocaleString() : 'never'}</div>
+            <div>Heating active {Math.round(100 * heatingActivePercentage)}% of the day.</div>
+            <div>Average daily temperature: {averageTemperature} °C</div>
+            <div>Showing {formatDurationMs(averagingPeriod)} of data.</div>
           </fieldset>
 
           <fieldset>
-            <legend>Configuration</legend>
-
+            <legend>System</legend>
+            <div>Controller uptime: {formatDurationMs(uptimeMillis)}</div>
             <div>Last WiFi reconnect: {lastReconnect > 0 ? new Date(new Date() - uptimeMillis + lastReconnect).toLocaleString() : 'never'}</div>
-            <div>Heating activation temperature: {activationTemp} °C</div>
-            <div>Heating deactivation temperature: {deactivationTemp} °C</div>
+            <div>Heating activates below {activationTemp} °C</div>
+            <div>Heating deactivates above {deactivationTemp} °C</div>
           </fieldset>
         </div>
       </div>

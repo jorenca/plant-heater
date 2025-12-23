@@ -2,6 +2,12 @@ h2 {
   text-align: center;
 }
 
+.cost-calculator-estimates {
+  margin: 2rem;
+  text-align: center;
+
+}
+
 .cost-calculator-row {
   display: flex;
   flex-direction: row;
@@ -22,12 +28,12 @@ h2 {
   }
 
   label {
-    width: 20rem;
+    width: 18rem;
     display: flex;
     justify-content: space-between;
 
     input {
-      width: 5rem;
+      width: 3rem;
     }
   }
 
