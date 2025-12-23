@@ -13,8 +13,8 @@ export default function PowerCostCalculator({ dayHoursEstimate, nightHoursEstima
   const [dayHeatingHours, setDayHeatingHours] = useState(2);
   const [nightHeatingHours, setNightHeatingHours] = useState(4);
 
-  const [dayRate, setDayRate] = useState(0.25);   // €/kWh
-  const [nightRate, setNightRate] = useState(0.15); // €/kWh
+  const [dayRate, setDayRate] = useState(0.124);   // €/kWh
+  const [nightRate, setNightRate] = useState(0.075); // €/kWh
 
   const results = useMemo(() => {
     const dayHeatingKWh =

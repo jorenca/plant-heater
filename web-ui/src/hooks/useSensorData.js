@@ -1,11 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { fetchSensors, getMockSensorReport } from "../api/sensors";
+import { loadFromStorage, saveToStorage } from "../helpers/localStorage";
+import isDevEnv from "../helpers/isDevEnv.ts";
 
 
 const HISTORY_LIMIT = 2000;
-const POLL_INTERVAL = 15 * 60 * 1000;
-
-const STORED_VALUES = [
+export const STORED_VALUES = [
   "temperature",
   "humidity",
   "activationTemp",
@@ -13,51 +13,10 @@ const STORED_VALUES = [
   "lvHeatPower"
 ];
 
-const STORAGE_KEY = "sensor-data-v1";
-const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+const POLL_INTERVAL_TESTING = 3*1000;
+const POLL_INTERVAL_PROD = 15 * 60 * 1000; // 15 minutes
+const POLL_INTERVAL = isDevEnv() ? POLL_INTERVAL_TESTING : POLL_INTERVAL_PROD;
 
-
-function loadFromStorage() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-
-    const parsed = JSON.parse(raw);
-    const cutoff = Date.now() - MAX_AGE_MS;
-
-    const validIndexes = parsed.timestamps
-      .map((ts, idx) => ({ ts: new Date(ts), idx }))
-      .filter(({ ts }) => ts.getTime() >= cutoff)
-      //.sort((a, b) => a.ts.getTime() - b.ts.getTime())
-      .map(({ idx }) => idx);
-
-    const filteredTimestamps = validIndexes.map(
-      (i) => new Date(parsed.timestamps[i])
-    );
-
-    const filteredSensorData = {};
-    Object.entries(parsed.sensorData || {}).forEach(([key, values]) => {
-      filteredSensorData[key] = validIndexes.map((i) => values[i]);
-    });
-
-    return {
-      timestamps: filteredTimestamps,
-      sensorData: filteredSensorData,
-      latestData: parsed.latestData || {},
-    };
-  } catch (err) {
-    console.error("Failed to load sensor data from storage", err);
-    return null;
-  }
-}
-
-function saveToStorage(data) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch (err) {
-    console.error("Failed to save sensor data to storage", err);
-  }
-}
 
 export function useSensorData() {
   const stored = loadFromStorage();
@@ -74,9 +33,9 @@ export function useSensorData() {
 
   const fetchData = async () => {
     try {
-      const json = await fetchSensors();
-      // FOR TESTING ONLY
-      //const json = getMockSensorReport(timestamps.length ? timestamps[timestamps.length - 1] : null);
+      const json = isDevEnv()
+        ? getMockSensorReport(timestamps.length ? timestamps[timestamps.length - 1] : null) // FOR TESTING ONLY
+        : await fetchSensors();
 
       setLatestData(json);
       setTimestamps((prev) =>
@@ -113,7 +72,6 @@ export function useSensorData() {
   }, [timestamps, sensorData, latestData]);
 
   const clearAllData = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEY);
     setTimestamps([]);
     setSensorData({});
     setLatestData({});

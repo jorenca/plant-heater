@@ -14,7 +14,6 @@ function formatDurationMs(ms) {
   totalSeconds %= 3600;
 
   const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
 
   const parts = [];
   if (days) parts.push(`${days} day${days !== 1 ? "s" : ""}`);

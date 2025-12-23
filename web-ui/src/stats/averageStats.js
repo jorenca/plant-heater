@@ -10,6 +10,9 @@ function isNightHours(segmentStart, segmentEnd) {
 }
 
 
+const MAX_SEGMENT_DURATION_MS = 2 * 60 * 60 * 1000;
+
+
 export function calculateAverageStats(timestamps, sensorData) {
 
   if (!timestamps) {
@@ -33,9 +36,14 @@ export function calculateAverageStats(timestamps, sensorData) {
   for (let i=0; i < timestamps.length-1; i++) {
     const segmentStart = timestamps[i];
     const segmentEnd = timestamps[i+1];
-    const isNight = isNightHours(segmentStart, segmentEnd);
-
     const segmentDurationMs = segmentEnd.getTime() - segmentStart.getTime();
+
+    // Skip long gaps in information
+    if (segmentDurationMs > MAX_SEGMENT_DURATION_MS) {
+      continue;
+    }
+
+    const isNight = isNightHours(segmentStart, segmentEnd);
 
     if (sensorData.lvHeatPower[i] > 0) {
       if (isNight) {
@@ -54,9 +62,6 @@ export function calculateAverageStats(timestamps, sensorData) {
     summedTemperature += sensorData.temperature[i] * segmentDurationMs;
     summedDurationMs += segmentDurationMs;
   }
-
-  console.log('night', activeNightMs, inactiveNightMs, activeNightMs / (activeNightMs + inactiveNightMs));
-  console.log('day', activeDayMs, inactiveDayMs, activeDayMs / (activeDayMs + inactiveDayMs));
 
   return {
     averagingPeriod: summedDurationMs,
