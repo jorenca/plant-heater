@@ -64,7 +64,7 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "cross-env TZ=UTC node scripts/test.js"
   },
   "eslintConfig": {
     "extends": [
@@ -139,5 +139,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
   }
 }

@@ -1,16 +1,14 @@
-const NIGHT_HOURS = 8;
+import { round } from "../helpers/math.ts";
 
 
-function isNightTime(atTime) {
+export const NIGHT_HOURS = 8;
+
+export function isNightTime(atTime) {
   return atTime.getHours() < 6 || atTime.getHours() >= 22;
 }
 
-function isNightHours(segmentStart, segmentEnd) {
-  return isNightTime(segmentStart) && isNightTime(segmentEnd);
-}
 
-
-const MAX_SEGMENT_DURATION_MS = 2 * 60 * 60 * 1000;
+const MAX_SEGMENT_DURATION_MS = 2 * 60 * 60 * 1000; // discard data from segments (gaps) over 2 hours
 
 
 export function calculateAverageStats(timestamps, sensorData) {
@@ -28,10 +26,16 @@ export function calculateAverageStats(timestamps, sensorData) {
   let summedTemperature = 0;
   let summedDurationMs = 0;
 
-  let activeDayMs = 0;
-  let inactiveDayMs = 1; // 1 to avoid division by zero
-  let activeNightMs = 0;
-  let inactiveNightMs = 1;
+  const activeMs = {
+    day: {
+      on: 0,
+      off: 1 // 1 to avoid division by zero
+    },
+    night: {
+      on: 0,
+      off: 1
+    }
+  };
 
   for (let i=0; i < timestamps.length-1; i++) {
     const segmentStart = timestamps[i];
@@ -43,31 +47,35 @@ export function calculateAverageStats(timestamps, sensorData) {
       continue;
     }
 
-    const isNight = isNightHours(segmentStart, segmentEnd);
+    const isNightBefore = isNightTime(segmentStart);
+    const isActiveBefore = sensorData.lvHeatPower[i] > 0;
+    const isNightLater = isNightTime(segmentEnd);
+    const isActiveLater = sensorData.lvHeatPower[i+1] > 0;
 
-    if (sensorData.lvHeatPower[i] > 0) {
-      if (isNight) {
-        activeNightMs += segmentDurationMs;
-      } else {
-        activeDayMs += segmentDurationMs;
-      }
-    } else {
-      if (isNight) {
-        inactiveNightMs += segmentDurationMs;
-      } else {
-        inactiveDayMs += segmentDurationMs;
-      }
-    }
+    // If one datapoint is active, but the other one isn't, then split the segment duration into both categories
+    activeMs[isNightBefore ? 'night' : 'day'][isActiveBefore ? 'on' : 'off'] += segmentDurationMs/2;
+    activeMs[isNightLater ? 'night' : 'day'][isActiveLater ? 'on' : 'off'] += segmentDurationMs/2;
 
-    summedTemperature += sensorData.temperature[i] * segmentDurationMs;
+    summedTemperature += (sensorData.temperature[i] + sensorData.temperature[i+1])/2 * segmentDurationMs;
     summedDurationMs += segmentDurationMs;
   }
 
+  const activeDayPercentage = activeMs.day.on / (activeMs.day.on+activeMs.day.off);
+  const activeNightPercentage = activeMs.night.on / (activeMs.night.on+activeMs.night.off);
+  const activePercentage = (activeMs.day.on + activeMs.night.on) / summedDurationMs;
+
+//  console.log(
+//    'active percentage', activeNightPercentage,
+//    'active on (hours):', activeMs.night.on / 1000 / 60 / 60,
+//    'active off (hours):', activeMs.night.off / 1000 / 60 / 60,
+//    'total measured (hours):', (activeMs.night.on + activeMs.night.off) / 1000 / 60 / 60
+//  );
+
   return {
     averagingPeriod: summedDurationMs,
-    averageTemperature: Math.round(10 * summedTemperature / summedDurationMs) / 10,
-    activeDayHours: Math.round(10 * (24-NIGHT_HOURS) * activeDayMs / (activeDayMs+inactiveDayMs)) / 10,
-    activeNightHours: Math.round(10 * NIGHT_HOURS * activeNightMs / (activeNightMs+inactiveNightMs)) / 10,
-    activePercentage: (activeDayMs + activeNightMs) / (activeDayMs + activeNightMs + inactiveDayMs + inactiveNightMs)
+    averageTemperature: round(summedTemperature / summedDurationMs, 1),
+    activeDayHours: round((24-NIGHT_HOURS) * activeDayPercentage, 1),
+    activeNightHours: round(NIGHT_HOURS * activeNightPercentage, 1),
+    activePercentage
   };
 }
