@@ -6,6 +6,7 @@ import SensorChart from "./SensorChart";
 export default function ChartAndControls({ timestamps, sensorData, clearDataFn }) {
 
   const [showDataControls, setShowDataControls] = useState(false);
+  const [plotActivationTemps, setPlotActivationTemps] = useState(false);
 
   function confirmClear() {
     const confirmation = window.confirm('Are you sure you want to clear all data?');
@@ -22,17 +23,30 @@ export default function ChartAndControls({ timestamps, sensorData, clearDataFn }
       <SensorChart
         timestamps={timestamps}
         sensorData={sensorData}
+        plotReferenceLines={plotActivationTemps}
       />
 
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-        <button onClick={() => setShowDataControls(!showDataControls)}>
+      <div style={{ margin: '0.5rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        <button
+          style={{ margin: '0.5rem' }}
+          onClick={() => setShowDataControls(!showDataControls)}
+        >
           {showDataControls ? 'Hide' : 'Show'} data controls
         </button>
 
         { showDataControls && (
-          <div style={{ margin: '0.5rem' }}>
+          <div>
               <span style={{ marginRight: '1rem' }}>Data points: {timestamps.length}</span>
               <button onClick={confirmClear}>Clear data</button>
+              <div>
+                <label for="showActivationTemps">Plot activation temperatures</label>
+                <input
+                  name="showActivationTemps"
+                  type="checkbox"
+                  value={plotActivationTemps}
+                  onChange={() => setPlotActivationTemps(!plotActivationTemps)}
+                />
+              </div>
           </div>
         )}
 

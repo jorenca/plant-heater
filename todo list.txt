@@ -1,2 +1,1 @@
 - flash controller and tweak responsive web design
-- show/hide activation thresholds on temp graph

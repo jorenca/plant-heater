@@ -39,9 +39,10 @@ const TEMP_RANGE = { min: -5, max: 20 };
 const HUM_RANGE = { min: 10, max: 100 };
 
 const EXCLUDED_FIELDS = ["lvHeatPower"];
+const REFERENCE_FIELDS = ['activationTemp', 'deactivationTemp'];
 
 
-export default function SensorChart({ timestamps, sensorData }) {
+export default function SensorChart({ timestamps, sensorData, plotReferenceLines }) {
   const sensors = Object.keys(sensorData);
 
   // --- Compute actual data ranges ---
@@ -100,7 +101,8 @@ export default function SensorChart({ timestamps, sensorData }) {
   const chartData = {
     //labels: timestamps,
     datasets: sensors
-      .filter((sensor) => !EXCLUDED_FIELDS.includes(sensor))
+      .filter(sensor => !EXCLUDED_FIELDS.includes(sensor))
+      .filter(sensor => plotReferenceLines || !REFERENCE_FIELDS.includes(sensor))
       .map((sensor, idx) => ({
         label: sensor,
         data: timestamps.map((ts, i) => ({

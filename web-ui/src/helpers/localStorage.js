@@ -1,6 +1,6 @@
 
 const STORAGE_KEY = "sensor-data-v1";
-const MAX_AGE_MS = 20 * 24 * 60 * 60 * 1000; // 20 days
+const MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
 
 
 export function loadFromStorage() {
