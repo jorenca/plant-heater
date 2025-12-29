@@ -1,7 +1,8 @@
 import { round } from "../helpers/math.ts";
 
 
-export const NIGHT_HOURS = 8;
+export const NIGHT_RATE_HOURS = 8;
+export const DAY_RATE_HOURS = 24 - NIGHT_RATE_HOURS;
 
 export function isNightTime(atTime) {
   return atTime.getHours() < 6 || atTime.getHours() >= 22;
@@ -74,8 +75,8 @@ export function calculateAverageStats(timestamps, sensorData) {
   return {
     averagingPeriod: summedDurationMs,
     averageTemperature: round(summedTemperature / summedDurationMs, 1),
-    activeDayHours: round((24-NIGHT_HOURS) * activeDayPercentage, 1),
-    activeNightHours: round(NIGHT_HOURS * activeNightPercentage, 1),
+    activeDayHours: round((24-NIGHT_RATE_HOURS) * activeDayPercentage, 1),
+    activeNightHours: round(NIGHT_RATE_HOURS * activeNightPercentage, 1),
     activePercentage
   };
 }

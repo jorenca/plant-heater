@@ -1,14 +1,17 @@
 import { useState, useMemo, useEffect } from "react";
 
+import { DAY_RATE_HOURS, NIGHT_RATE_HOURS } from "../stats/averageStats";
+
 import "./PowerCostCalculator.css";
+
 
 const EUR_TO_BGN = 1.95583;
 
 
 export default function PowerCostCalculator({ dayHoursEstimate, nightHoursEstimate }) {
 
-  const [heatingPower, setHeatingPower] = useState(300); // watts
-  const [idlePower, setIdlePower] = useState(20); // watts
+  const [heatingPower, setHeatingPower] = useState(600); // watts
+  const [idlePower, setIdlePower] = useState(5); // watts
 
   const [dayHeatingHours, setDayHeatingHours] = useState(2);
   const [nightHeatingHours, setNightHeatingHours] = useState(4);
@@ -71,6 +74,7 @@ export default function PowerCostCalculator({ dayHoursEstimate, nightHoursEstima
             Heating power (W)
             <input
               type="number"
+              min={1}
               value={heatingPower}
               onChange={(e) => setHeatingPower(+e.target.value)}
             />
@@ -80,6 +84,7 @@ export default function PowerCostCalculator({ dayHoursEstimate, nightHoursEstima
             Idle power (W)
             <input
               type="number"
+              min={1}
               value={idlePower}
               onChange={(e) => setIdlePower(+e.target.value)}
             />
@@ -90,6 +95,8 @@ export default function PowerCostCalculator({ dayHoursEstimate, nightHoursEstima
             <input
               type="number"
               step="0.1"
+              min={0}
+              max={DAY_RATE_HOURS}
               value={dayHeatingHours}
               onChange={(e) =>
                 setDayHeatingHours(+e.target.value)
@@ -102,6 +109,8 @@ export default function PowerCostCalculator({ dayHoursEstimate, nightHoursEstima
             <input
               type="number"
               step="0.1"
+              min={0}
+              max={NIGHT_RATE_HOURS}
               value={nightHeatingHours}
               onChange={(e) =>
                 setNightHeatingHours(+e.target.value)
@@ -115,6 +124,7 @@ export default function PowerCostCalculator({ dayHoursEstimate, nightHoursEstima
             <input
               type="number"
               step="0.01"
+              min={0.01}
               value={dayRate}
               onChange={(e) => setDayRate(+e.target.value)}
             />
@@ -125,6 +135,7 @@ export default function PowerCostCalculator({ dayHoursEstimate, nightHoursEstima
             <input
               type="number"
               step="0.01"
+              min={0.01}
               value={nightRate}
               onChange={(e) => setNightRate(+e.target.value)}
             />

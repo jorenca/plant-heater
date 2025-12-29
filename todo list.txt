@@ -1,3 +1,2 @@
-- calculator input fields cannot be negative
 - flash controller and tweak responsive web design
-- measure and update values for device power consumption
+- show/hide activation thresholds on temp graph
