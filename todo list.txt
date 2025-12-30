@@ -1,1 +1,1 @@
-- flash controller and tweak responsive web design
+- tweak responsive web design

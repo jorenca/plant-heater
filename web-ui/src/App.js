@@ -4,6 +4,9 @@ import PowerCostCalculator from "./components/PowerCostCalculator";
 
 import { useSensorData } from "./hooks/useSensorData";
 import { calculateAverageStats } from './stats/averageStats.js';
+import { calculateMinimumStats } from './stats/minimumStats.js';
+
+import "./App.css";
 
 
 function App() {
@@ -32,8 +35,12 @@ function App() {
     activePercentage
   } = calculateAverageStats(timestamps, sensorData);
 
+  const {
+    minTemperature: minTemperature24h
+  } = calculateMinimumStats(timestamps, sensorData, 24);
+
   return (
-    <div style={{ width: "900px", margin: "1rem auto" }}>
+    <div className="app-container">
 
       <InformationBoxes
         temperature={Math.round(temperature*10)/10}
@@ -46,6 +53,7 @@ function App() {
         lastReconnect={lastReconnect}
         lastHeatOn={lastHeatOn}
         averageTemperature={averageTemperature}
+        minTemperature24h={minTemperature24h}
         averagingPeriod={averagingPeriod}
         heatingActivePercentage={activePercentage}
         timestamp={timestamps[timestamps.length-1]}

@@ -35,6 +35,7 @@ export default function InformationBoxes({
   activationTemp,
   deactivationTemp,
   averageTemperature,
+  minTemperature24h,
   heatingActivePercentage,
   averagingPeriod,
   timestamp
@@ -67,6 +68,7 @@ export default function InformationBoxes({
           <fieldset>
             <legend>Statistics</legend>
 
+            <div>Lowest temperature (last 24 hours): {minTemperature24h} °C</div>
             <div>Last heating started on {lastHeatOn > 0 ? new Date(new Date() - uptimeMillis + lastHeatOn).toLocaleString() : 'never'}</div>
             <div>Heating active {Math.round(100 * heatingActivePercentage)}% of the day.</div>
             <div>Average daily temperature: {averageTemperature} °C</div>
