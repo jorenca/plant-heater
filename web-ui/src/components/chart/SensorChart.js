@@ -13,6 +13,8 @@ import { Line } from "react-chartjs-2";
 
 import thresholdBackgroundPlugin from "./thresholdBackgroundPlugin";
 
+import "./SensorChart.css";
+
 
 ChartJS.register(thresholdBackgroundPlugin());
 
@@ -119,6 +121,7 @@ export default function SensorChart({ timestamps, sensorData, plotReferenceLines
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // This allows the chart to fill the height and width of its parent container
     animation: false,
     scales,
     plugins: {
@@ -132,5 +135,9 @@ export default function SensorChart({ timestamps, sensorData, plotReferenceLines
     },
   };
 
-  return <Line data={chartData} options={options} />;
+  return (
+    <div className="chart-container">
+      <Line data={chartData} options={options} />
+    </div>
+  );
 }

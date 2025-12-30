@@ -44,7 +44,7 @@ export default function InformationBoxes({
   return (
     <>
       <div className='info-boxes-container'>
-        <div style={{ textAlign: 'center', margin: '5rem' }}>
+        <div className='info-box-main'>
           <div style={{ fontWeight: 'bold', fontSize: 'xxx-large' }}>
             {temperature} °C
           </div>

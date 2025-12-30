@@ -1,0 +1,14 @@
+.chart-container {
+  /* Use relative positioning for Chart.js to detect size changes */
+  position: relative;
+  width: 100%;
+  height: 50vh; /* Takes 50% of the viewport height */
+  margin: auto; /* Center the chart */
+}
+
+/* Optional: Use media queries to adjust sizes specifically for mobile vs desktop */
+@media (min-width: 768px) {
+  .chart-container {
+    height: 400px; /* Fixed height for larger screens */
+  }
+}

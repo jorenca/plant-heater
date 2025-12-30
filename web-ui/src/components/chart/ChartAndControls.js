@@ -39,13 +39,15 @@ export default function ChartAndControls({ timestamps, sensorData, clearDataFn }
               <span style={{ marginRight: '1rem' }}>Data points: {timestamps.length}</span>
               <button onClick={confirmClear}>Clear data</button>
               <div>
-                <label for="showActivationTemps">Plot activation temperatures</label>
-                <input
-                  name="showActivationTemps"
-                  type="checkbox"
-                  value={plotActivationTemps}
-                  onChange={() => setPlotActivationTemps(!plotActivationTemps)}
-                />
+                <label>
+                Plot activation temperatures
+                  <input
+                    name="showActivationTemps"
+                    type="checkbox"
+                    value={plotActivationTemps}
+                    onChange={() => setPlotActivationTemps(!plotActivationTemps)}
+                  />
+                </label>
               </div>
           </div>
         )}

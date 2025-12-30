@@ -13,7 +13,7 @@ export const STORED_VALUES = [
   "lvHeatPower"
 ];
 
-const POLL_INTERVAL_TESTING = 3*1000;
+const POLL_INTERVAL_TESTING = 5 * 1000;
 const POLL_INTERVAL_PROD = 15 * 60 * 1000; // 15 minutes
 const POLL_INTERVAL = isDevEnv() ? POLL_INTERVAL_TESTING : POLL_INTERVAL_PROD;
 
@@ -75,7 +75,11 @@ export function useSensorData() {
     setTimestamps([]);
     setSensorData({});
     setLatestData({});
-    fetchData();
+    if (isDevEnv()) {
+      window.location.reload(); // discard mock objects state
+    } else {
+      fetchData();
+    }
   }, []);
 
   return {

@@ -16,6 +16,6 @@ export function calculateMinimumStats(timestamps, sensorData, thresholdHoursAgo)
     .filter((d, i) => timestamps[i] > pastThreshold);
 
   return {
-    minTemperature: round(Math.min(temps), 1)
+    minTemperature: round(Math.min(...temps), 1)
   };
 }
